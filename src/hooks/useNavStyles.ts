@@ -58,7 +58,7 @@ export const useNavStyles = (positionColorRelation: PositionColorRelation) => {
       window.removeEventListener("scroll", handleScroll, evtOptions);
       window.removeEventListener("resize", handleScroll, evtOptions);
     };
-  }, [positionColorRelation]); // Only re-run if positionColorRelation changes
+  }, [positionColorRelation, navStyles.shouldRefresh, navStyles.isLight]); // Include all dependencies
   
   return { navStyles };
   
