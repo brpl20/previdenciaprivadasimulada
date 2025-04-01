@@ -33,7 +33,7 @@ const BlogHeader = () => {
       >
         <div className="container mx-auto px-[20px]">
           <div className="flex items-center justify-between px-[20px] py-[2px] md:py-0 ease-in-out transition-all duration-300">
-            <Link href="/">
+            <Link href="/" legacyBehavior={false}>
               <Image
                 width={120}
                 height={70}
@@ -65,7 +65,7 @@ const BlogHeader = () => {
               </div>
 
               <div className="flex flex-col items-center justify-center mt-4 mb-8">
-                <Link href="/">
+                <Link href="/" legacyBehavior={false}>
                   <Image
                     width={160}
                     height={94}
