@@ -1598,6 +1598,47 @@ return (
                     
                     <Grid item xs={12} md={6}>
                       <Typography variant="subtitle2" gutterBottom>
+                        Forma de Recebimento:
+                      </Typography>
+                      <Typography paragraph sx={{ fontWeight: 'medium' }}>
+                        {parametrosInvestimento.receberParcelaUnica ? 'Parcela Única' : 'Renda Mensal (20 anos)'}
+                      </Typography>
+                      
+                      <Grid container spacing={2} sx={{ mt: 1 }}>
+                        <Grid item xs={12}>
+                          <TextField
+                            fullWidth
+                            label="Tempo de Acumulação (anos)"
+                            name="tempoAcumulacao"
+                            type="number"
+                            value={parametrosInvestimento.tempoAcumulacao}
+                            onChange={handleParametrosInvestimentoChange}
+                            margin="normal"
+                            variant="outlined"
+                            InputProps={{ inputProps: { min: 1, max: 40 } }}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                name="receberParcelaUnica"
+                                checked={parametrosInvestimento.receberParcelaUnica}
+                                onChange={handleParametrosInvestimentoChange}
+                                color="primary"
+                              />
+                            }
+                            label="Receber em parcela única"
+                          />
+                          <Tooltip title="Se desativado, o valor será recebido em parcelas mensais ao longo de 20 anos">
+                            <HelpOutlineIcon fontSize="small" color="action" sx={{ ml: 1 }} />
+                          </Tooltip>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle2" gutterBottom>
                         Economia de IR durante a fase de contribuição (PGBL):
                       </Typography>
                       <Typography paragraph sx={{ fontWeight: 'medium' }}>
@@ -1611,6 +1652,46 @@ return (
                         {formatCurrency((resultadosAposentadoria.pgbl.irMensal || 0) * 12 * 20 - (resultadosAposentadoria.vgbl.irMensal || 0) * 12 * 20)}
                         {' '}(estimativa para 20 anos de recebimento)
                       </Typography>
+                    </Grid>
+                  </Grid>
+                </Paper>
+              </Grid>
+              
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mt: 2 }}>
+                  <Typography variant="subtitle1" gutterBottom>
+                    Planejamento de Renda na Aposentadoria
+                  </Typography>
+                  <Typography paragraph>
+                    Você pode personalizar como deseja receber sua renda na aposentadoria. 
+                    Por padrão, calculamos a renda mensal considerando um período de 20 anos.
+                  </Typography>
+                  
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Renda Mensal Desejada (R$)"
+                        name="rendaMensalDesejada"
+                        type="number"
+                        // Valor padrão baseado no salário atual
+                        defaultValue={(dadosPessoais.salarioMensal * 0.7).toFixed(2)}
+                        margin="normal"
+                        variant="outlined"
+                        InputProps={{ inputProps: { min: 0 } }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        label="Período de Recebimento (anos)"
+                        name="periodoRecebimento"
+                        type="number"
+                        defaultValue={20}
+                        margin="normal"
+                        variant="outlined"
+                        InputProps={{ inputProps: { min: 5, max: 40 } }}
+                      />
                     </Grid>
                   </Grid>
                 </Paper>
