@@ -1,0 +1,8 @@
+// public/robots.txt
+User-agent: Googlebot
+Disallow: /nogooglebot/
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.pellizzetti.adv.br/sitemap.xml

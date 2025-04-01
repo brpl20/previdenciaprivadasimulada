@@ -1,0 +1,271 @@
+// public/sitemap.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://www.pellizzetti.adv.br/</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-coveiro</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-enfermeiro</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-frentista-caixa</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-motorista</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-rural</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-vigilante</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/aposentadoria-visao-monocular</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.99</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/advogado-previdenciario-cascavel</loc>
+  <lastmod>2024-11-29T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/advogado/bruno-pellizzetti</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/advogado/eduardo-walber</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/faq-advogado</loc>
+  <lastmod>2025-03-03T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/faq-beneficio</loc>
+  <lastmod>2025-03-03T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/advogado/joao-prado</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/CTC-periodo-trabalhado-prefeitura-como-autonomo</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/ctc-o-que-fazer-com-tempo-trabalhado-no-regime-proprio</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/rpps-licenca-e-contribuicao-em-atraso</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/como-pedir-ajuda-para-o-juiz</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/ctc-averbacao-desaverbacao</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/Tema-810-do-STF-Uma-Revisao-Ainda-Possivel</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-vigilange-na-mira-do-stf</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-deficiente-revisao</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-do-motorista-uma-batalha-perdida</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentei-sem-tempo-rural-e-agora</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/guia-completo-rural-segurado-especial</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/pagamento-em-atraso</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-especial-enfermagem</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/estrategia-do-duplo-requerimento-previdenciario</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-especial-frentista</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-especial-servidor-publico</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/guia-completo-de-profissoes-que-nao-precisam-de-ppp</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/revisao-aposentadoria-pensao-servidor-publico-guia</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/avanco-pericia-medica-inss</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/noticias-portaria-38-2024</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/decisao-do-tce-pode-salvar-sua-aposentadoria</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/direito-adquirido-antes-reforma-previdencia</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/triplice-acu</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/pensao-por-morte-filho</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/pensao-por-morte</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/doencas-estigmatizantes</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/corrigir-erros-guia</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/adv-confiavel</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-bloq</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-rural</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/aposentadoria-semina</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/uniao-estavel</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/artigo-pensao-morte-conceitos-integralidade</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/pensao-extincao-cotas-individuais-nao-faca-seu-pedido-antes-de-ler</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/periodo-de-graca-guia</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/sucumbencia-previdenciaria-um-entendimento-injusto</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://www.pellizzetti.adv.br/blog/teto-minimo-teto-maximo</loc>
+  <lastmod>2024-11-24T01:40:21+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+</urlset>
