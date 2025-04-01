@@ -290,35 +290,42 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                   <TableCell>Detalhe</TableCell>
                   <TableCell align="right">PGBL</TableCell>
                   <TableCell align="right">VGBL</TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">Capital Reinvestido</TableCell>
-                  )}
+                  <TableCell align="right">Valor Tributável</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
                   <TableCell>Valor Total</TableCell>
                   <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.saldo)}</TableCell>
+                  <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.saldo)}</TableCell>
+                  <TableCell align="right">-</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Base de Cálculo IR</TableCell>
                   <TableCell align="right">
-                    {formatCurrency(rendimentoVGBL)}
+                    {formatCurrency(resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12)}
                   </TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">
-                      {formatCurrency(projecaoAnual.length > 0 ? projecaoAnual[projecaoAnual.length - 1].saldoReinvestido : 0)}
-                    </TableCell>
-                  )}
+                  <TableCell align="right">
+                    {formatCurrency(rendimentoVGBL + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12)}
+                  </TableCell>
+                  <TableCell align="right">
+                    <strong>PGBL:</strong> 100% do saldo + outras rendas<br/>
+                    <strong>VGBL:</strong> Apenas rendimentos + outras rendas
+                  </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>IR Total</TableCell>
                   <TableCell align="right">
-                    {calcularIR(resultadosAposentadoria.pgbl.saldo).toFixed(2)}
+                    {formatCurrency(calcularIR(
+                      resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12
+                    ))}
                   </TableCell>
                   <TableCell align="right">
-                    {calcularIR(rendimentoVGBL).toFixed(2)}
+                    {formatCurrency(calcularIR(
+                      rendimentoVGBL + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12
+                    ))}
                   </TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">-</TableCell>
-                  )}
+                  <TableCell align="right">-</TableCell>
                 </TableRow>
                 {/* Faixas de tributação progressiva */}
                 <TableRow>
@@ -485,33 +492,66 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                   <TableCell>Detalhe</TableCell>
                   <TableCell align="right">PGBL</TableCell>
                   <TableCell align="right">VGBL</TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">Capital Reinvestido</TableCell>
-                  )}
+                  <TableCell align="right">Valor Tributável</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
                   <TableCell>Valor Total</TableCell>
                   <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.saldo)}</TableCell>
-                  <TableCell align="right">{formatCurrency(rendimentoVGBL)}</TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">
-                      {formatCurrency(projecaoAnual.length > 0 ? projecaoAnual[projecaoAnual.length - 1].saldoReinvestido : 0)}
-                    </TableCell>
-                  )}
+                  <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.saldo)}</TableCell>
+                  <TableCell align="right">-</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Base de Cálculo IR</TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(resultadosAposentadoria.pgbl.saldo)}
+                  </TableCell>
+                  <TableCell align="right">
+                    {formatCurrency(rendimentoVGBL)}
+                  </TableCell>
+                  <TableCell align="right">
+                    <strong>PGBL:</strong> 100% do saldo<br/>
+                    <strong>VGBL:</strong> Apenas rendimentos
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Alíquota Aplicável</TableCell>
+                  <TableCell align="right">
+                    {parametrosInvestimento.tempoAcumulacao > 10 ? '10%' :
+                     parametrosInvestimento.tempoAcumulacao > 8 ? '15%' :
+                     parametrosInvestimento.tempoAcumulacao > 6 ? '20%' :
+                     parametrosInvestimento.tempoAcumulacao > 4 ? '25%' :
+                     parametrosInvestimento.tempoAcumulacao > 2 ? '30%' : '35%'}
+                  </TableCell>
+                  <TableCell align="right">
+                    {parametrosInvestimento.tempoAcumulacao > 10 ? '10%' :
+                     parametrosInvestimento.tempoAcumulacao > 8 ? '15%' :
+                     parametrosInvestimento.tempoAcumulacao > 6 ? '20%' :
+                     parametrosInvestimento.tempoAcumulacao > 4 ? '25%' :
+                     parametrosInvestimento.tempoAcumulacao > 2 ? '30%' : '35%'}
+                  </TableCell>
+                  <TableCell align="right">-</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>IR Total</TableCell>
                   <TableCell align="right">
-                    {calcularIR(resultadosAposentadoria.pgbl.saldo).toFixed(2)}
+                    {formatCurrency(resultadosAposentadoria.pgbl.saldo * 
+                      (parametrosInvestimento.tempoAcumulacao > 10 ? 0.10 :
+                       parametrosInvestimento.tempoAcumulacao > 8 ? 0.15 :
+                       parametrosInvestimento.tempoAcumulacao > 6 ? 0.20 :
+                       parametrosInvestimento.tempoAcumulacao > 4 ? 0.25 :
+                       parametrosInvestimento.tempoAcumulacao > 2 ? 0.30 : 0.35))}
                   </TableCell>
                   <TableCell align="right">
-                    {(calcularIR(rendimentoVGBL).toFixed(2))} 
+                    {formatCurrency(rendimentoVGBL * 
+                      (parametrosInvestimento.tempoAcumulacao > 10 ? 0.10 :
+                       parametrosInvestimento.tempoAcumulacao > 8 ? 0.15 :
+                       parametrosInvestimento.tempoAcumulacao > 6 ? 0.20 :
+                       parametrosInvestimento.tempoAcumulacao > 4 ? 0.25 :
+                       parametrosInvestimento.tempoAcumulacao > 2 ? 0.30 : 0.35))}
                   </TableCell>
-                  {parametrosInvestimento.reinvestirGanhosIR && (
-                    <TableCell align="right">-</TableCell>
-                  )}
+                  <TableCell align="right">-</TableCell>
                 </TableRow>
                 {/* Faixas de tributação regressiva */}
                 <TableRow>
@@ -825,6 +865,200 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
           </Paper>
         </Box>
       )}
+      
+      {/* Seção para planejamento de renda mensal na aposentadoria */}
+      <Box sx={{ mt: 6 }}>
+        <Typography variant="h6" gutterBottom sx={{ color: '#012B09', fontWeight: 'medium' }}>
+          Planejamento de Renda Mensal na Aposentadoria
+        </Typography>
+        <Paper sx={{ p: 3, bgcolor: '#f8f9fa', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                Projeção de Renda Mensal
+              </Typography>
+              
+              <TableContainer component={Paper} sx={{ mt: 2, mb: 3 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#E9EDE5' }}>
+                      <TableCell>Fonte de Renda</TableCell>
+                      <TableCell align="right">Valor Mensal</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Aposentadoria RPPS</TableCell>
+                      <TableCell align="right">{formatCurrency(aposentadoriaRPPSValor)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Outras Rendas</TableCell>
+                      <TableCell align="right">{formatCurrency(outrasRendasCorrigidasValor)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Renda PGBL (20 anos)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.rendaMensal)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Renda VGBL (20 anos)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.rendaMensal)}</TableCell>
+                    </TableRow>
+                    {parametrosInvestimento.reinvestirGanhosIR && (
+                      <TableRow>
+                        <TableCell>Renda do Capital Reinvestido</TableCell>
+                        <TableCell align="right">
+                          {formatCurrency(projecaoAnual.length > 0 ? 
+                            projecaoAnual[projecaoAnual.length - 1].saldoReinvestido / (20 * 12) : 0)}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                      <TableCell><strong>Total Mensal Bruto (PGBL)</strong></TableCell>
+                      <TableCell align="right"><strong>
+                        {formatCurrency(aposentadoriaRPPSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.pgbl.rendaMensal)}
+                      </strong></TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#f5f5f5' }}>
+                      <TableCell><strong>Total Mensal Bruto (VGBL)</strong></TableCell>
+                      <TableCell align="right"><strong>
+                        {formatCurrency(aposentadoriaRPPSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.vgbl.rendaMensal + 
+                          (parametrosInvestimento.reinvestirGanhosIR && projecaoAnual.length > 0 ? 
+                            projecaoAnual[projecaoAnual.length - 1].saldoReinvestido / (20 * 12) : 0))}
+                      </strong></TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>IR Mensal (PGBL)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.irMensal || 0)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>IR Mensal (VGBL)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.irMensal || 0)}</TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#e9f7ef' }}>
+                      <TableCell><strong>Total Mensal Líquido (PGBL)</strong></TableCell>
+                      <TableCell align="right"><strong>
+                        {formatCurrency(resultadosAposentadoria.pgbl.rendaLiquida)}
+                      </strong></TableCell>
+                    </TableRow>
+                    <TableRow sx={{ bgcolor: '#e9f7ef' }}>
+                      <TableCell><strong>Total Mensal Líquido (VGBL)</strong></TableCell>
+                      <TableCell align="right"><strong>
+                        {formatCurrency(resultadosAposentadoria.vgbl.rendaLiquida)}
+                      </strong></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+            
+            <Grid item xs={12} md={6}>
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
+                Planejamento de Saques Mensais
+              </Typography>
+              
+              <Paper sx={{ p: 2, bgcolor: '#fff', mb: 3 }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Estratégia de Saque Regressivo
+                </Typography>
+                <Typography paragraph>
+                  Para maximizar o benefício da tabela regressiva, é recomendável sacar primeiro os recursos 
+                  que estão há mais tempo investidos, beneficiando-se da alíquota mínima de 10%.
+                </Typography>
+                <Typography paragraph>
+                  <strong>Sugestão de Saque Mensal:</strong> {formatCurrency(
+                    Math.max(resultadosAposentadoria.pgbl.rendaMensal, resultadosAposentadoria.vgbl.rendaMensal)
+                  )}
+                </Typography>
+                <Typography>
+                  <strong>Duração Estimada:</strong> 20 anos (240 meses)
+                </Typography>
+              </Paper>
+              
+              <Paper sx={{ p: 2, bgcolor: '#fff' }}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Simulação de Renda Personalizada
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="Renda Mensal Desejada (R$)"
+                  type="number"
+                  defaultValue={Math.max(resultadosAposentadoria.pgbl.rendaMensal, resultadosAposentadoria.vgbl.rendaMensal).toFixed(2)}
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{ inputProps: { min: 0 } }}
+                />
+                <TextField
+                  fullWidth
+                  label="Taxa de Rentabilidade Anual (%)"
+                  type="number"
+                  defaultValue={parametrosInvestimento.taxaRentabilidade}
+                  margin="normal"
+                  variant="outlined"
+                  InputProps={{ inputProps: { min: 0, max: 20, step: 0.1 } }}
+                />
+                <Button 
+                  variant="contained" 
+                  color="primary"
+                  fullWidth
+                  sx={{ 
+                    mt: 2,
+                    backgroundColor: '#012B09',
+                    '&:hover': { backgroundColor: '#01461E' }
+                  }}
+                >
+                  Recalcular Duração
+                </Button>
+              </Paper>
+            </Grid>
+            
+            <Grid item xs={12}>
+              <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold', mt: 2 }}>
+                Estratégia de Saque Otimizada para Economia de IR
+              </Typography>
+              <TableContainer component={Paper} sx={{ mt: 1 }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow sx={{ bgcolor: '#E9EDE5' }}>
+                      <TableCell>Período</TableCell>
+                      <TableCell align="right">Fonte Principal</TableCell>
+                      <TableCell align="right">Valor Mensal</TableCell>
+                      <TableCell align="right">Alíquota IR</TableCell>
+                      <TableCell align="right">IR Mensal</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Anos 1-5</TableCell>
+                      <TableCell align="right">VGBL (rendimentos)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.rendaMensal)}</TableCell>
+                      <TableCell align="right">10%</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.vgbl.rendaMensal * 0.1 * (rendimentoVGBL / resultadosAposentadoria.vgbl.saldo))}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Anos 6-10</TableCell>
+                      <TableCell align="right">PGBL (parcial)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.rendaMensal * 0.5)}</TableCell>
+                      <TableCell align="right">10%</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.rendaMensal * 0.5 * 0.1)}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Anos 11-20</TableCell>
+                      <TableCell align="right">PGBL (restante)</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.rendaMensal)}</TableCell>
+                      <TableCell align="right">10%</TableCell>
+                      <TableCell align="right">{formatCurrency(resultadosAposentadoria.pgbl.rendaMensal * 0.1)}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Typography variant="body2" sx={{ mt: 2, fontStyle: 'italic' }}>
+                Nota: Esta estratégia considera o uso da tabela regressiva e prioriza o saque de recursos com menor tributação primeiro.
+                Os valores são estimativas e podem variar conforme a rentabilidade real dos investimentos.
+              </Typography>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Box>
       
       {/* Seção para exibir os resultados mensais */}
       {monthlyResults && (

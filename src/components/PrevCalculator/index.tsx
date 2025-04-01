@@ -304,15 +304,54 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
 
   // Função para calcular o IR com base na tabela regressiva
   const calcularIRRegressivo = (baseCalculo: number, tempoAcumulacao: number): number => {
-    let aliquota = 0.35; // Padrão: até 2 anos
+    // Distribuição do tempo de acumulação
+    // Simulamos que os aportes foram feitos de forma distribuída ao longo do tempo
+    // Para uma simulação mais precisa, seria necessário rastrear cada aporte individualmente
     
-    if (tempoAcumulacao > 10) aliquota = 0.10;
-    else if (tempoAcumulacao > 8) aliquota = 0.15;
-    else if (tempoAcumulacao > 6) aliquota = 0.20;
-    else if (tempoAcumulacao > 4) aliquota = 0.25;
-    else if (tempoAcumulacao > 2) aliquota = 0.30;
+    const distribuicaoAportes = [
+      { tempo: 0, percentual: 0.05 },  // 5% dos aportes com menos de 2 anos
+      { tempo: 2, percentual: 0.10 },  // 10% dos aportes entre 2-4 anos
+      { tempo: 4, percentual: 0.15 },  // 15% dos aportes entre 4-6 anos
+      { tempo: 6, percentual: 0.20 },  // 20% dos aportes entre 6-8 anos
+      { tempo: 8, percentual: 0.20 },  // 20% dos aportes entre 8-10 anos
+      { tempo: 10, percentual: 0.30 }, // 30% dos aportes com mais de 10 anos
+    ];
     
-    return baseCalculo * aliquota;
+    // Ajustar a distribuição com base no tempo total de acumulação
+    const distribuicaoAjustada = distribuicaoAportes.map(item => {
+      // Se o tempo de acumulação for menor que o tempo da faixa, zeramos o percentual
+      if (tempoAcumulacao <= item.tempo) {
+        return { ...item, percentual: 0 };
+      }
+      return item;
+    });
+    
+    // Redistribuir os percentuais para que somem 100%
+    const somaPercentuais = distribuicaoAjustada.reduce((soma, item) => soma + item.percentual, 0);
+    if (somaPercentuais > 0) {
+      distribuicaoAjustada.forEach(item => {
+        item.percentual = item.percentual / somaPercentuais;
+      });
+    } else {
+      // Se todos os percentuais forem zero, colocamos 100% na primeira faixa
+      distribuicaoAjustada[0].percentual = 1;
+    }
+    
+    // Calcular o IR para cada faixa
+    let irTotal = 0;
+    distribuicaoAjustada.forEach(item => {
+      let aliquota = 0.35; // Padrão: até 2 anos
+      
+      if (item.tempo >= 10) aliquota = 0.10;
+      else if (item.tempo >= 8) aliquota = 0.15;
+      else if (item.tempo >= 6) aliquota = 0.20;
+      else if (item.tempo >= 4) aliquota = 0.25;
+      else if (item.tempo >= 2) aliquota = 0.30;
+      
+      irTotal += baseCalculo * item.percentual * aliquota;
+    });
+    
+    return irTotal;
   };
 
   // Função para calcular idade a partir da data de nascimento
@@ -1047,6 +1086,19 @@ return (
                   InputProps={{ inputProps: { min: calcularIdade(dadosPessoais.dataNascimento) + 1, max: 100 } }}
                 />
               </Grid>
+              {/* Salary fields moved to "Imposto de Renda" tab */}
+            </Grid>
+          </Box>
+        )}
+        
+        {/* Nova Aba de Imposto de Renda */}
+        {tabValue === 1 && (
+          <Box sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Dados para Cálculo do Imposto de Renda
+            </Typography>
+            
+            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -1073,6 +1125,7 @@ return (
                   InputProps={{ inputProps: { min: 0, max: 20, step: 0.1 } }}
                 />
               </Grid>
+              
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mt: 2 }}>
                   <Typography variant="subtitle1" gutterBottom>
@@ -1104,18 +1157,6 @@ return (
                   )}
                 </Paper>
               </Grid>
-            </Grid>
-          </Box>
-        )}
-        
-        {/* Nova Aba de Imposto de Renda */}
-        {tabValue === 1 && (
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Dados para Cálculo do Imposto de Renda
-            </Typography>
-            
-            <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
@@ -1414,6 +1455,11 @@ return (
                   </Typography>
                   <Typography paragraph>
                     A tabela regressiva, instituída pela Lei 11.053/2004, oferece alíquotas menores quanto maior for o tempo de acumulação do investimento, incentivando o investimento de longo prazo. Esta opção é especialmente vantajosa para quem planeja manter os recursos investidos por mais de 10 anos.
+                  </Typography>
+                  
+                  <Typography paragraph>
+                    <strong>Importante:</strong> Na tabela regressiva, cada aporte é tributado individualmente de acordo com seu tempo de permanência. 
+                    Isso significa que, ao sacar todo o valor de uma vez, diferentes partes do seu investimento podem ser tributadas com alíquotas diferentes.
                   </Typography>
                   
                   <TableContainer>
