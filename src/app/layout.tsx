@@ -1,12 +1,9 @@
 // src/app/layout.tsx
 // import { headers } from "next/headers";
-import dynamic from "next/dynamic";
 import type { Metadata } from "next";
-
-import "./globals.css";
 import { cookies } from "next/headers";
 import { GoogleScripts } from "./GoogleScripts";
-import FaqStylesImport from '@/components/ui/FaqStylesImport';
+
 
 
 export const metadata: Metadata = {
@@ -35,7 +32,7 @@ export default async function RootLayout({
       <body
         suppressHydrationWarning={process.env.NODE_ENV === 'production'}
       >
-        <FaqStylesImport />
+
         {/* Google Tag Manager*/}
         <noscript>
           <iframe

@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { montaguSlab } from "@/app/GoogleFonts";
 import { useNavStyles } from "@/hooks/useNavStyles";
 import { useNavAnimation } from "@/hooks/useNavAnimation";
 import { cn } from "@/lib/utils";
@@ -137,7 +136,6 @@ export const Header = ({positionColorRelation}: HeaderProps) => {
                 cn([
                   "hidden md:flex items-center gap-[47px]",
                   "ease-in-out transition-all duration-300",
-                  montaguSlab.className,
                   navStyles.isLight ? "text-white" : "text-[#012B09]"
                 ])}
               >

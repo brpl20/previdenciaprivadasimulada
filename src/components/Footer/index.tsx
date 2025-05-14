@@ -24,7 +24,7 @@ const Footer = () => {
               Especialistas em Direito Previdenciário
             </Typography>
             <Box sx={{ mt: 2 }}>
-              <Link href="/" passHref>
+              <Link href="https://www.pellizzetti.adv.br/" passHref>
                 <Typography 
                   component="a" 
                   sx={{ 
