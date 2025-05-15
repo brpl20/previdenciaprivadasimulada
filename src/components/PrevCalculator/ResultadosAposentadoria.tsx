@@ -53,6 +53,7 @@ interface ParametrosInvestimento {
   utilizarTabelaRegressiva: boolean;
   tempoAcumulacao: number;
   receberParcelaUnica: boolean;
+  taxaRentabilidade: number;
 }
 
 interface ProjecaoAnual {
