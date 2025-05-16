@@ -7,8 +7,8 @@ import { GoogleScripts } from "./GoogleScripts";
 
 
 export const metadata: Metadata = {
-  title: "Pellizzetti Walber & Associados - Advogados - Cascavel, PR",
-  description: "Advogados Especialistas em Previdência - Cascavel. Agende uma Consulta! Excelência em Direito de Benefício por Invalidez, INSS, Pensão e Aposentadoria no Paraná",
+  title: "Calculadora de Previdência: PGBL vs VGBL",
+  description: "Compare planos de previdência privada PGBL e VGBL com nossa calculadora. Descubra qual opção é melhor para o seu perfil e otimize seus benefícios fiscais.",
 };
 
 export default async function RootLayout({
