@@ -26,26 +26,11 @@ export default async function RootLayout({
   return (
     <html lang="pt-br">
       <head>
-        {/* <link rel="preconnect" href="https://fonts.googleapis.com" /> */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body
         suppressHydrationWarning={process.env.NODE_ENV === 'production'}
       >
-
-        {/* Google Tag Manager*/}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-PH5ZGZMP"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
-        {/* End Google Tag Manager */}
-        {children}
-
-        <GoogleScripts {...{nonce, visited}} />
       </body>
     </html>
   );

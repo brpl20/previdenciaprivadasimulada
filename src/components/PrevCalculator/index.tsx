@@ -984,7 +984,7 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
   return (
     <>
       {/* <Header positionColorRelation={positionColorRelation} /> */}
-      <Container maxWidth="lg" sx={{ py: 20 }}>
+      <Container maxWidth="lg" sx={{ py: 5 }}>
         <Box sx={{ mb: 4, textAlign: 'center' }}>
           <Typography
             variant="h4"
