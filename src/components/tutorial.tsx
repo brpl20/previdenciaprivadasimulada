@@ -1,14 +1,14 @@
-import YouTube, { YouTubeEvent, YouTubeProps } from "react-youtube";
+// import YouTube, { YouTubeProps } from "react-youtube";
 
 function Tutorial() {
-    const opts: YouTubeProps["opts"] = {
-        width: "100%",
-        height: "100%",
-        playerVars: {
-            autoplay: 0,
-            rel: 0,
-        },
-    };
+    // const opts: YouTubeProps["opts"] = {
+    //     width: "100%",
+    //     height: "100%",
+    //     playerVars: {
+    //         autoplay: 0,
+    //         rel: 0,
+    //     },
+    // };
 
     return (
         <div className="bg-white rounded-lg shadow p-4 max-w-5xl mx-auto mt-10">
@@ -29,12 +29,23 @@ function Tutorial() {
                     </p>
                 </div>
                 <div className="w-full md:w-[480px] md:h-[270px] rounded-lg overflow-hidden shadow-lg">
+                    <iframe
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/qtp_czgcfuA"
+                        title="YouTube video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                    ></iframe>
+                </div>
+                {/* <div className="w-full md:w-[480px] md:h-[270px] rounded-lg overflow-hidden shadow-lg">
                     <YouTube
                         videoId="qtp_czgcfuA"
                         opts={opts}
                         className="w-full h-full"
                     />
-                </div>
+                </div> */}
             </div>
         </div>
     );

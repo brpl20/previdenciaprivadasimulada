@@ -7,8 +7,8 @@ const headers = [{
   key: 'Content-Security-Policy',
   value: `
       default-src 'self' https: data:;
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.hotjar.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.google.com https://www.googleadservices.com https://www.pellizzetti.adv.br;
-      script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.google.com https://www.googleadservices.com https://www.pellizzetti.adv.br https://*.hotjar.com;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.hotjar.com https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.google.com https://www.googleadservices.com https://www.pellizzetti.adv.br https://www.youtube.com;
+      script-src-elem 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.google.com https://www.googleadservices.com https://www.pellizzetti.adv.br https://*.hotjar.com https://www.youtube.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.hotjar.com;
       font-src 'self' https://fonts.gstatic.com https://*.hotjar.com;
       img-src * data: https://*.hotjar.com;
