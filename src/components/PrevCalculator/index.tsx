@@ -24,6 +24,11 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 import SaveIcon from '@mui/icons-material/Save';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 
 // Importações do Recharts
@@ -57,6 +62,9 @@ interface DadosPessoais {
   taxaCorrecaoSalarial: number;
   aposentadoriaIntegral: boolean;
   valorAposentadoriaProporcional: number;
+  desconsiderarRPPS: boolean;
+  considerarINSS: boolean;
+  valorAposentadoriaINSS: number;
 }
 
 interface DadosImpostoRenda {
@@ -64,6 +72,7 @@ interface DadosImpostoRenda {
   outrosDescontos: number;
   dependentes: number;
   previdenciaOficial: number;
+  dependentesDataNascimento: string[];
 }
 
 interface ParametrosInvestimento {
@@ -176,7 +185,10 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     salarioMensal: 10000,
     taxaCorrecaoSalarial: 4,
     aposentadoriaIntegral: true,
-    valorAposentadoriaProporcional: 6000
+    valorAposentadoriaProporcional: 6000,
+    desconsiderarRPPS: false,
+    considerarINSS: false,
+    valorAposentadoriaINSS: 0
   });
 
   // Estado para os dados de imposto de renda
@@ -184,7 +196,8 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     outrasRendas: 0,
     outrosDescontos: 0,
     dependentes: 0,
-    previdenciaOficial: 0 // Agora será percentual
+    previdenciaOficial: 0, // Agora será percentual
+    dependentesDataNascimento: []
   });
 
   // Estado para os parâmetros de investimento
@@ -268,9 +281,42 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
   // Handler para atualização dos dados de imposto de renda
   const handleDadosImpostoRendaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
+    if (name === 'dependentes') {
+      const numDependentes = Number(value);
+      const novasDatas = [...dadosImpostoRenda.dependentesDataNascimento];
+      
+      // Ajustar array de datas de nascimento
+      if (numDependentes > novasDatas.length) {
+        // Adicionar novas datas vazias
+        while (novasDatas.length < numDependentes) {
+          novasDatas.push('2010-01-01'); // Data padrão para novos dependentes
+        }
+      } else if (numDependentes < novasDatas.length) {
+        // Remover datas excedentes
+        novasDatas.splice(numDependentes);
+      }
+      
+      setDadosImpostoRenda({
+        ...dadosImpostoRenda,
+        [name]: numDependentes,
+        dependentesDataNascimento: novasDatas
+      });
+    } else {
+      setDadosImpostoRenda({
+        ...dadosImpostoRenda,
+        [name]: Number(value)
+      });
+    }
+  };
+  
+  // Handler para atualização das datas de nascimento dos dependentes
+  const handleDependenteDateChange = (index: number, value: string) => {
+    const novasDatas = [...dadosImpostoRenda.dependentesDataNascimento];
+    novasDatas[index] = value;
     setDadosImpostoRenda({
       ...dadosImpostoRenda,
-      [name]: Number(value)
+      dependentesDataNascimento: novasDatas
     });
   };
 
@@ -286,7 +332,9 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
   // Função para calcular o IR com base na tabela progressiva
   const calcularIR = (baseCalculo: number, dependentes: number = 0, previdenciaOficialPercentual: number = 0, outrosDescontos: number = 0): number => {
     // Dedução por dependente: R$ 189,59 por mês ou R$ 2.275,08 por ano
-    const deducaoDependentes = dependentes * 2275.08;
+    // Usar dependentes válidos (menores de 21) se não for passado um número específico
+    const dependentesValidos = dependentes > 0 ? dependentes : calcularDependentesValidos();
+    const deducaoDependentes = dependentesValidos * 2275.08;
 
     // Dedução da previdência oficial (agora como percentual do salário) e outros descontos
     const deducaoPrevidencia = (previdenciaOficialPercentual / 100) * (baseCalculo);
@@ -370,6 +418,25 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     return idade;
   };
 
+  // Função para calcular quantos dependentes são válidos (menores de 21 anos)
+  const calcularDependentesValidos = (): number => {
+    return dadosImpostoRenda.dependentesDataNascimento.filter(data => {
+      if (!data) return false;
+      const idade = calcularIdade(data);
+      return idade < 21;
+    }).length;
+  };
+
+  // Função para calcular quantos dependentes serão válidos no futuro
+  const calcularDependentesValidosNoFuturo = (anosNoFuturo: number): number => {
+    return dadosImpostoRenda.dependentesDataNascimento.filter(data => {
+      if (!data) return false;
+      const idadeAtual = calcularIdade(data);
+      const idadeFutura = idadeAtual + anosNoFuturo;
+      return idadeFutura < 21;
+    }).length;
+  };
+
   // Função para calcular a projeção mensal
   // Variáveis para armazenar valores de aposentadoria e rendas para uso nas tabelas
   const [aposentadoriaRPPSValor, setAposentadoriaRPPSValor] = useState<number>(0);
@@ -387,6 +454,9 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     const saldoPGBL = ultimoAno.saldoPGBL;
     const saldoVGBL = ultimoAno.saldoVGBL;
     const saldoReinvestido = ultimoAno.saldoReinvestido;
+    
+    // Calcular dependentes válidos na aposentadoria
+    const dependentesValidosNaAposentadoria = calcularDependentesValidosNoFuturo(anosContribuicao);
 
     // Estimar renda mensal dos planos (assumindo 20 anos de recebimento)
     const anosRecebimento = 20;
@@ -395,9 +465,14 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     const rendaMensalReinvestido = saldoReinvestido / (anosRecebimento * 12);
 
     // Calcular aposentadoria RPPS
-    const aposentadoriaRPPS = aposentadoriaIntegral
-      ? ultimoAno.salarioMensal
-      : valorAposentadoriaProporcional;
+    const aposentadoriaRPPS = dadosPessoais.desconsiderarRPPS
+      ? 0
+      : aposentadoriaIntegral
+        ? ultimoAno.salarioMensal
+        : valorAposentadoriaProporcional;
+        
+    // Calcular aposentadoria INSS
+    const aposentadoriaINSS = dadosPessoais.considerarINSS ? dadosPessoais.valorAposentadoriaINSS : 0;
 
     // Calcular outras rendas com correção
     const outrasRendasCorrigidas = outrasRendas * Math.pow(1 + taxaCorrecaoSalarial / 100, anosContribuicao);
@@ -407,8 +482,8 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     setOutrasRendasCorrigidasValor(outrasRendasCorrigidas);
 
     // Calcular renda total mensal
-    const rendaTotalPGBL = aposentadoriaRPPS + outrasRendasCorrigidas + rendaMensalPGBL;
-    const rendaTotalVGBL = aposentadoriaRPPS + outrasRendasCorrigidas + rendaMensalVGBL;
+    const rendaTotalPGBL = aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas + rendaMensalPGBL;
+    const rendaTotalVGBL = aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas + rendaMensalVGBL;
 
     // Total investido para cálculo do rendimento no VGBL
     const totalInvestido = projecaoAnual.reduce((total, ano) => total + ano.contribuicaoPGBLMensal, 0);
@@ -417,22 +492,22 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
 
     // CENÁRIO 1: PGBL com recebimento em parcela única e alíquota progressiva
     const irPGBLProgressivoUnico = calcularIR(
-      saldoPGBL + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12,
-      dependentes,
+      saldoPGBL + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     );
-    const rendaLiquidaPGBLProgressivaUnica = saldoPGBL - irPGBLProgressivoUnico + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+    const rendaLiquidaPGBLProgressivaUnica = saldoPGBL - irPGBLProgressivoUnico + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
 
     // CENÁRIO 2: PGBL com recebimento em parcela única e alíquota regressiva
     const irPGBLRegressivoUnico = calcularIRRegressivo(saldoPGBL, tempoAcumulacao);
-    const rendaLiquidaPGBLRegressivaUnica = saldoPGBL - irPGBLRegressivoUnico + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+    const rendaLiquidaPGBLRegressivaUnica = saldoPGBL - irPGBLRegressivoUnico + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
 
     // CENÁRIO 3: PGBL com recebimento diluído e alíquota progressiva
     const baseCalculoIRPGBLDiluido = rendaTotalPGBL * 12;
     const irPGBLProgressivoDiluido = calcularIR(
       baseCalculoIRPGBLDiluido,
-      dependentes,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     );
@@ -446,23 +521,23 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     // No VGBL, apenas o rendimento é tributado
     const irVGBLProgressivoUnico = calcularIR(
       rendimentoVGBL,
-      dependentes,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     );
-    const rendaLiquidaVGBLProgressivaUnica = saldoVGBL - irVGBLProgressivoUnico + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+    const rendaLiquidaVGBLProgressivaUnica = saldoVGBL - irVGBLProgressivoUnico + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
 
     // CENÁRIO 6: VGBL com recebimento em parcela única e alíquota regressiva
     const irVGBLRegressivoUnico = calcularIRRegressivo(rendimentoVGBL, tempoAcumulacao);
-    const rendaLiquidaVGBLRegressivaUnica = saldoVGBL - irVGBLRegressivoUnico + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+    const rendaLiquidaVGBLRegressivaUnica = saldoVGBL - irVGBLRegressivoUnico + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
 
     // CENÁRIO 7: VGBL com recebimento diluído e alíquota progressiva
     // No VGBL, apenas o rendimento é tributado na parte mensal
     const rendimentoMensalVGBL = rendaMensalVGBL * percentualRendimento;
-    const baseCalculoIRVGBLDiluido = rendimentoMensalVGBL * 12 + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+    const baseCalculoIRVGBLDiluido = rendimentoMensalVGBL * 12 + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
     const irVGBLProgressivoDiluido = calcularIR(
       baseCalculoIRVGBLDiluido,
-      dependentes,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     );
@@ -491,8 +566,8 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
         rendaLiquidaPGBL = rendaLiquidaPGBLProgressivaUnica / 12;
         rendaLiquidaVGBL = rendaLiquidaVGBLProgressivaUnica / 12;
       }
-      baseCalculoIRPGBL = saldoPGBL + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
-      baseCalculoIRVGBL = rendimentoVGBL + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12;
+      baseCalculoIRPGBL = saldoPGBL + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
+      baseCalculoIRVGBL = rendimentoVGBL + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12;
     } else {
       // Diluído
       if (utilizarTabelaRegressiva) {
@@ -521,8 +596,8 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
 
     // Calcular cenários para o saldo reinvestido (similar ao VGBL)
     const rendaLiquidaReinvestidoProgressivaUnica = saldoReinvestido - calcularIR(
-      saldoReinvestido * percentualRendimento + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12,
-      dependentes,
+      saldoReinvestido * percentualRendimento + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     ) / 12;
@@ -533,8 +608,8 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
     ) / 12;
 
     const rendaLiquidaReinvestidoProgressivaDiluida = rendaMensalReinvestido * 12 - calcularIR(
-      rendaMensalReinvestido * percentualRendimento * 12 + (aposentadoriaRPPS + outrasRendasCorrigidas) * 12,
-      dependentes,
+      rendaMensalReinvestido * percentualRendimento * 12 + (aposentadoriaRPPS + aposentadoriaINSS + outrasRendasCorrigidas) * 12,
+      dependentesValidosNaAposentadoria,
       previdenciaOficial,
       0
     );
@@ -1034,7 +1109,7 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
             }}
           >
             <Tab label="Dados Pessoais" />
-            <Tab label="Imposto de Renda" />
+            <Tab label="Renda Atual e Futura" />
             <Tab label="Parâmetros de Investimento" />
             <Tab label="Tributação no Recebimento" />
             <Tab label="Projeção Mensal" />
@@ -1097,8 +1172,14 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
           {tabValue === 1 && (
             <Box sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Dados para Cálculo do Imposto de Renda
+                Dados para economia e custo de IR
               </Typography>
+              
+              <Box sx={{ mb: 3, p: 2, bgcolor: '#f0f7ff', borderRadius: 1, borderLeft: '4px solid #1976d2' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Os cálculos de rendimento atuais serão importantes para determinar sua escolha de parâmetro de investimento no PGBL e VGBL, confira a próxima aba para mais informações.
+                </Typography>
+              </Box>
 
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
@@ -1117,7 +1198,14 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Taxa de Correção Salarial Anual (%)"
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        Taxa de Correção Salarial Anual (%)
+                        <Tooltip title="Esse será o valor próximo de correção monetária" arrow>
+                          <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                        </Tooltip>
+                      </Box>
+                    }
                     name="taxaCorrecaoSalarial"
                     type="number"
                     value={dadosPessoais.taxaCorrecaoSalarial}
@@ -1130,27 +1218,95 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
 
                 <Grid item xs={12}>
                   <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mt: 2 }}>
+                    <FormControl component="fieldset">
+                      <FormLabel component="legend">Aposentadoria RPPS</FormLabel>
+                      <RadioGroup
+                        value={
+                          dadosPessoais.desconsiderarRPPS 
+                            ? 'desconsiderar' 
+                            : dadosPessoais.aposentadoriaIntegral 
+                              ? 'integral' 
+                              : 'proporcional'
+                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === 'desconsiderar') {
+                            setDadosPessoais({
+                              ...dadosPessoais,
+                              desconsiderarRPPS: true,
+                              aposentadoriaIntegral: false
+                            });
+                          } else if (value === 'integral') {
+                            setDadosPessoais({
+                              ...dadosPessoais,
+                              desconsiderarRPPS: false,
+                              aposentadoriaIntegral: true
+                            });
+                          } else {
+                            setDadosPessoais({
+                              ...dadosPessoais,
+                              desconsiderarRPPS: false,
+                              aposentadoriaIntegral: false
+                            });
+                          }
+                        }}
+                      >
+                        <FormControlLabel
+                          value="desconsiderar"
+                          control={<Radio />}
+                          label="Desconsiderar aposentadoria no RPPS (não sou servidor público)"
+                        />
+                        <FormControlLabel
+                          value="integral"
+                          control={<Radio />}
+                          label="Aposentadoria RPPS Integral"
+                        />
+                        <FormControlLabel
+                          value="proporcional"
+                          control={<Radio />}
+                          label="Aposentadoria RPPS Proporcional"
+                        />
+                      </RadioGroup>
+                      {!dadosPessoais.aposentadoriaIntegral && !dadosPessoais.desconsiderarRPPS && (
+                        <TextField
+                          fullWidth
+                          label="Valor Mensal Aposentadoria Proporcional (R$)"
+                          name="valorAposentadoriaProporcional"
+                          type="number"
+                          value={dadosPessoais.valorAposentadoriaProporcional}
+                          onChange={handleDadosPessoaisChange}
+                          margin="normal"
+                          variant="outlined"
+                          InputProps={{ inputProps: { min: 0 } }}
+                        />
+                      )}
+                    </FormControl>
+                  </Paper>
+                </Grid>
+                
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, bgcolor: '#f8f9fa', mt: 2 }}>
                     <Typography variant="subtitle1" gutterBottom>
-                      Aposentadoria RPPS
+                      Aposentadoria INSS
                     </Typography>
                     <FormControlLabel
                       control={
                         <Switch
-                          name="aposentadoriaIntegral"
-                          checked={dadosPessoais.aposentadoriaIntegral}
+                          name="considerarINSS"
+                          checked={dadosPessoais.considerarINSS}
                           onChange={handleDadosPessoaisChange}
                           color="primary"
                         />
                       }
-                      label="Aposentadoria RPPS Integral"
+                      label="Considerar aposentadoria no INSS"
                     />
-                    {!dadosPessoais.aposentadoriaIntegral && (
+                    {dadosPessoais.considerarINSS && (
                       <TextField
                         fullWidth
-                        label="Valor Mensal Aposentadoria Proporcional (R$)"
-                        name="valorAposentadoriaProporcional"
+                        label="Valor Aproximado da Aposentadoria INSS (R$)"
+                        name="valorAposentadoriaINSS"
                         type="number"
-                        value={dadosPessoais.valorAposentadoriaProporcional}
+                        value={dadosPessoais.valorAposentadoriaINSS}
                         onChange={handleDadosPessoaisChange}
                         margin="normal"
                         variant="outlined"
@@ -1159,17 +1315,26 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
                     )}
                   </Paper>
                 </Grid>
+                
                 <Grid item xs={12} sm={6}>
                   <TextField
                     fullWidth
-                    label="Outras Rendas Mensais Atuais (R$)"
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        Outras Rendas Mensais Atuais (R$)
+                        <Tooltip title="Valor de outros rendimentos que você possa possuir como por exemplo locação de imóveis na pessoa física" arrow>
+                          <InfoOutlinedIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+                        </Tooltip>
+                      </Box>
+                    }
                     name="outrasRendas"
                     type="number"
-                    value={dadosImpostoRenda.outrasRendas}
+                    value={dadosImpostoRenda.outrasRendas || ''}
                     onChange={handleDadosImpostoRendaChange}
                     margin="normal"
                     variant="outlined"
                     InputProps={{ inputProps: { min: 0 } }}
+                    placeholder="Digite o valor"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1178,11 +1343,12 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
                     label="Outros Descontos Mensais (R$)"
                     name="outrosDescontos"
                     type="number"
-                    value={dadosImpostoRenda.outrosDescontos}
+                    value={dadosImpostoRenda.outrosDescontos || ''}
                     onChange={handleDadosImpostoRendaChange}
                     margin="normal"
                     variant="outlined"
                     InputProps={{ inputProps: { min: 0 } }}
+                    placeholder="Digite o valor"
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -1214,6 +1380,49 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
                     InputProps={{ inputProps: { min: 0, max: 10 } }}
                   />
                 </Grid>
+                
+                {/* Campos de data de nascimento dos dependentes */}
+                {dadosImpostoRenda.dependentes > 0 && (
+                  <Grid item xs={12}>
+                    <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
+                      Datas de Nascimento dos Dependentes
+                    </Typography>
+                    <Box sx={{ mb: 2, p: 2, bgcolor: '#fff3e0', borderRadius: 1, borderLeft: '4px solid #ff9800' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        <strong>Dependentes válidos atualmente:</strong> {calcularDependentesValidos()} de {dadosImpostoRenda.dependentes}
+                        <br />
+                        <strong>Na aposentadoria:</strong> {calcularDependentesValidosNoFuturo(dadosPessoais.idadeAposentadoria - calcularIdade(dadosPessoais.dataNascimento))} dependentes válidos
+                        <br />
+                        <small>(Dependentes são considerados válidos até completarem 21 anos)</small>
+                      </Typography>
+                    </Box>
+                    <Grid container spacing={2}>
+                      {Array.from({ length: dadosImpostoRenda.dependentes }, (_, index) => {
+                        const dataDependente = dadosImpostoRenda.dependentesDataNascimento[index] || '2010-01-01';
+                        const idadeDependente = calcularIdade(dataDependente);
+                        const idadeNaAposentadoria = idadeDependente + (dadosPessoais.idadeAposentadoria - calcularIdade(dadosPessoais.dataNascimento));
+                        const validoAtualmente = idadeDependente < 21;
+                        const validoNaAposentadoria = idadeNaAposentadoria < 21;
+                        
+                        return (
+                          <Grid item xs={12} sm={6} md={4} key={index}>
+                            <TextField
+                              fullWidth
+                              label={`Dependente ${index + 1} - Data de Nascimento`}
+                              type="date"
+                              value={dataDependente}
+                              onChange={(e) => handleDependenteDateChange(index, e.target.value)}
+                              margin="normal"
+                              variant="outlined"
+                              InputLabelProps={{ shrink: true }}
+                              helperText={`Idade atual: ${idadeDependente} anos | Na aposentadoria: ${idadeNaAposentadoria} anos ${validoNaAposentadoria ? '(válido)' : '(não válido)'}`}
+                            />
+                          </Grid>
+                        );
+                      })}
+                    </Grid>
+                  </Grid>
+                )}
               </Grid>
 
               <Box sx={{ mt: 4 }}>
@@ -1787,6 +1996,7 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
               parametrosInvestimento={parametrosInvestimento}
               projecaoAnual={projecaoAnual}
               aposentadoriaRPPSValor={aposentadoriaRPPSValor}
+              aposentadoriaINSSValor={dadosPessoais.considerarINSS ? dadosPessoais.valorAposentadoriaINSS : 0}
               outrasRendasCorrigidasValor={outrasRendasCorrigidasValor}
               formatCurrency={formatCurrency}
               exportData={prepareExportData()?.resultados}
@@ -1941,31 +2151,33 @@ const PrevCalculator: React.FC<PrevCalculatorProps> = ({ onDataExport }) => {
           )}
         </Paper>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 5 }}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleRecalcular}
-            disabled={isCalculating}
-            sx={{
-              py: 1.5,
-              px: 4,
-              backgroundColor: '#012B09',
-              '&:hover': {
-                backgroundColor: '#01461E',
-              },
-              borderRadius: '8px',
-              fontWeight: 'bold'
-            }}
-          >
-            {isCalculating ? (
-              <>
-                <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
-                Calculando...
-              </>
-            ) : 'Recalcular'}
-          </Button>
-        </Box>
+        {tabValue !== 0 && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, mb: 5 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleRecalcular}
+              disabled={isCalculating}
+              sx={{
+                py: 1.5,
+                px: 4,
+                backgroundColor: '#012B09',
+                '&:hover': {
+                  backgroundColor: '#01461E',
+                },
+                borderRadius: '8px',
+                fontWeight: 'bold'
+              }}
+            >
+              {isCalculating ? (
+                <>
+                  <CircularProgress size={24} color="inherit" sx={{ mr: 1 }} />
+                  Calculando...
+                </>
+              ) : 'Recalcular'}
+            </Button>
+          </Box>
+        )}
 
         <Snackbar
           open={showFeedback}

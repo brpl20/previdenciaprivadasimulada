@@ -67,6 +67,7 @@ interface ResultadosAposentadoriaProps {
   parametrosInvestimento: ParametrosInvestimento;
   projecaoAnual: ProjecaoAnual[];
   aposentadoriaRPPSValor: number;
+  aposentadoriaINSSValor: number;
   outrasRendasCorrigidasValor: number;
   formatCurrency: (value: number) => string;
   exportData?: {
@@ -114,6 +115,7 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
   parametrosInvestimento,
   projecaoAnual,
   aposentadoriaRPPSValor,
+  aposentadoriaINSSValor,
   outrasRendasCorrigidasValor,
   formatCurrency,
   exportData,
@@ -202,7 +204,7 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
   const pgblProgressivoBreakdown = calcularIRProgressivoBreakdown(resultadosAposentadoria.pgbl.baseCalculoIR);
   
   // Calcular o valor tributável do VGBL (apenas o rendimento)
-  const valorTributavelVGBL = resultadosAposentadoria.vgbl.baseCalculoIR - aposentadoriaRPPSValor * 12 - outrasRendasCorrigidasValor * 12;
+  const valorTributavelVGBL = resultadosAposentadoria.vgbl.baseCalculoIR - (aposentadoriaRPPSValor + aposentadoriaINSSValor) * 12 - outrasRendasCorrigidasValor * 12;
   const vgblProgressivoBreakdown = calcularIRProgressivoBreakdown(valorTributavelVGBL);
   
   // Calcular breakdowns regressivos
@@ -306,10 +308,10 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                 <TableRow>
                   <TableCell>Base de Cálculo IR</TableCell>
                   <TableCell align="right">
-                    {formatCurrency(resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12)}
+                    {formatCurrency(resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor) * 12)}
                   </TableCell>
                   <TableCell align="right">
-                    {formatCurrency(rendimentoVGBL + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12)}
+                    {formatCurrency(rendimentoVGBL + (aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor) * 12)}
                   </TableCell>
                   <TableCell align="right">
                     <strong>PGBL:</strong> 100% do saldo + outras rendas<br/>
@@ -320,12 +322,12 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                   <TableCell>IR Total</TableCell>
                   <TableCell align="right">
                     {formatCurrency(calcularIR(
-                      resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12
+                      resultadosAposentadoria.pgbl.saldo + (aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor) * 12
                     ))}
                   </TableCell>
                   <TableCell align="right">
                     {formatCurrency(calcularIR(
-                      rendimentoVGBL + (aposentadoriaRPPSValor + outrasRendasCorrigidasValor) * 12
+                      rendimentoVGBL + (aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor) * 12
                     ))}
                   </TableCell>
                   <TableCell align="right">-</TableCell>
@@ -894,6 +896,12 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                       <TableCell>Aposentadoria RPPS</TableCell>
                       <TableCell align="right">{formatCurrency(aposentadoriaRPPSValor)}</TableCell>
                     </TableRow>
+                    {aposentadoriaINSSValor > 0 && (
+                    <TableRow>
+                      <TableCell>Aposentadoria INSS</TableCell>
+                      <TableCell align="right">{formatCurrency(aposentadoriaINSSValor)}</TableCell>
+                    </TableRow>
+                    )}
                     <TableRow>
                       <TableCell>Outras Rendas</TableCell>
                       <TableCell align="right">{formatCurrency(outrasRendasCorrigidasValor)}</TableCell>
@@ -918,13 +926,13 @@ const ResultadosAposentadoria: React.FC<ResultadosAposentadoriaProps> = ({
                     <TableRow sx={{ bgcolor: '#f5f5f5' }}>
                       <TableCell><strong>Total Mensal Bruto (PGBL)</strong></TableCell>
                       <TableCell align="right"><strong>
-                        {formatCurrency(aposentadoriaRPPSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.pgbl.rendaMensal)}
+                        {formatCurrency(aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.pgbl.rendaMensal)}
                       </strong></TableCell>
                     </TableRow>
                     <TableRow sx={{ bgcolor: '#f5f5f5' }}>
                       <TableCell><strong>Total Mensal Bruto (VGBL)</strong></TableCell>
                       <TableCell align="right"><strong>
-                        {formatCurrency(aposentadoriaRPPSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.vgbl.rendaMensal + 
+                        {formatCurrency(aposentadoriaRPPSValor + aposentadoriaINSSValor + outrasRendasCorrigidasValor + resultadosAposentadoria.vgbl.rendaMensal + 
                           (parametrosInvestimento.reinvestirGanhosIR && projecaoAnual.length > 0 ? 
                             projecaoAnual[projecaoAnual.length - 1].saldoReinvestido / (20 * 12) : 0))}
                       </strong></TableCell>
